@@ -14,6 +14,13 @@
     <title>マルチアンケートフォーム</title>
 
     <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    
+
     body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -22,10 +29,9 @@
     }
 
     main {
-    padding: 130px;
     width: 100%;
     top: auto;
-    position: absolute;
+    position: relative;
     }
     
     .btn {
@@ -98,23 +104,32 @@
     }
 
     .form-container {
-    float: right;
     width: 50%;
     padding: 20px;
-    top: -350px;
     background-color: rgb(245, 248, 250);
     margin: 10px;
     position: relative;
     z-index: 1;
+    min-width: 300px;
+    max-width: 600px;
+    justify-content: center;
 
     }
 
     .image-container {
     float: left;
-    width: 50%;
+    width: 100%;
+    max-width: 600px;
     margin: 10px;
     position: relative;
-    top: 300px;
+    top: 200px;
+    }
+
+    @media (max-width: 600px){
+      .image-container{
+        display: flex;
+        flex-direction: column;
+      }
     }
 
     @keyframes spin {
@@ -125,7 +140,6 @@
 
     header {
       left: 0;
-      position: fixed;
       width: 100%;
       height: 100px;
       background-color: rgb(245, 248, 250);
@@ -139,7 +153,7 @@
     }
 
     nav {
-      position: fixed;
+      position: absolute;
       float: right;
       top: 30px;
       right: 30px;
@@ -171,9 +185,8 @@
     .survey-purpose {
       margin: 10px;
       padding: 10px;
-      width: 620;
+      width: 100%;
       position: absolute;
-      top: 200px;
       background-color: rgb(245, 248, 250) ;
       z-index: 0;
     }
@@ -181,9 +194,14 @@
     </style>
 </head>
 <body>
-    <div id="app" class="container-fluid ">
+    <div id="app" class="container-fluid">
         <header>
-            <h1><a href="#">マルチアンケートフォーム</a></h1>
+            <h1>
+              <a href="https://plaid.co.jp/">
+
+                <img src="https://www.scsk.jp/product/common/karte/img/karte_logo.png" width="200">
+              </a>
+            </h1>
             <nav>
                 <ul>
                   <li><a href="#">資料請求</a></li>
@@ -197,9 +215,9 @@
             <p>このアンケートは、当社の製品やサービスに関するご意見やご要望を収集するために。</p>
             <p>アンケート結果は、今後の製品開発やサービス向上に役立てさせていただきます。</p>
           </div>          
-          <div class="image-container">
+          <!-- <div class="image-container">
               <img src="https://assets.st-note.com/img/1681220681171-xFNvgUIL9y.jpg?width=2000&height=2000&fit=bounds&format=jpg&quality=85" width="620">
-           </div>
+           </div> -->
           <div class="form-container"> 
           <div class="progress-bar">
               <div class="progress" :style="{ width: (currentStep - 1)*50 + '%'}"></div>
