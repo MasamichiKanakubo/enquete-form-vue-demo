@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Vue CDNサーバーに接続 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- ファビコンに使用する画像を指定 -->
+    <link rel="icon" type="image/png" href="https://assets.st-note.com/production/uploads/images/6965291/profile_6f0aace1499df999e1f7470b25f22624.jpg?fit=bounds&format=jpeg&quality=85&width=330">
+    <!-- BootstrapのCSSを読み込み -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>マルチアンケートフォーム</title>
+
+    <style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0px;
+    overflow: hidden;
+    }
+
+    main {
+    padding: 130px;
+    width: 100%;
+    top: auto;
+    position: absolute;
+    }
+    
+    .btn {
+      background-color: rgb(40, 171, 159);
+      border-color: rgb(40, 171, 159);
+    }
+
+    button:disabled {
+      background-color: rgb(40, 171, 159) !important;
+      border-color: rgb(40, 171, 159) !important;
+    }
+
+    /* ボタン同士の感覚 */
+    .button-spacing {
+    margin-right: 10px;
+    }
+
+    /* hover時 */
+    .btn-primary:hover {
+      background-color: rgb(40, 171, 159);
+      border-color: rgb(40, 171, 159);
+    }
+
+    /* ボタンをクリックした時の効果 */
+    .btn-primary:active {
+      background-color: rgb(40, 171, 159) !important;
+      border-color:rgb(40, 171, 159) !important;
+      box-shadow: true; 
+    }
+
+    input[type="radio"]:checked + label {
+      color: rgb(40, 171, 159) !important;
+    }
+
+    .required {
+      color: red;
+      margin-left: 5px;
+    }
+
+    /* グルグル回るデザイン */
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #333;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+
+    /* 進捗バーのレイアウト */
+    .progress-bar {
+      width: 100%;
+      background-color: #f0f0f0;
+      height: 20px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    /* 進捗バーの中の進む部分 */
+    .progress {
+      height: 100%;
+      background-color: rgb(40, 171, 159);
+      border-radius: 4px;
+      transition: width 0.3s ease-in-out;
+    }
+
+    .container {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .form-container {
+    float: right;
+    width: 50%;
+    padding: 20px;
+    top: -350px;
+    background-color: rgb(245, 248, 250);
+    margin: 10px;
+    position: relative;
+    z-index: 1;
+
+    }
+
+    .image-container {
+    float: left;
+    width: 50%;
+    margin: 10px;
+    position: relative;
+    top: 300px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    header {
+      left: 0;
+      position: fixed;
+      width: 100%;
+      height: 100px;
+      background-color: rgb(245, 248, 250);
+      padding: 10px;
+      z-index: 2;
+    }
+
+    h1 {
+      margin: 10px;
+      font-family: "Noto Sans JP";
+    }
+
+    nav {
+      position: fixed;
+      float: right;
+      top: 30px;
+      right: 30px;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      height: 100px;
+    }
+
+    li {
+      display: inline-block;
+      margin-inline: 10px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #000000;
+    }
+
+    .question {
+      border: 1x solid black;
+      background-color: #eee;
+      margin: 5px;
+    }
+
+    .survey-purpose {
+      margin: 10px;
+      padding: 10px;
+      width: 620;
+      position: absolute;
+      top: 200px;
+      background-color: rgb(245, 248, 250) ;
+      z-index: 0;
+    }
+
+    </style>
+</head>
+<body>
+    <div id="app" class="container-fluid ">
+        <header>
+            <h1><a href="#">マルチアンケートフォーム</a></h1>
+            <nav>
+                <ul>
+                  <li><a href="#">資料請求</a></li>
+                  <li><button class="btn btn-primary">お問合せ</button></li>
+                </ul>
+            </nav>              
+        </header>
+        <main>
+         <div class="survey-purpose">
+            <h2>アンケートの目的</h2>
+            <p>このアンケートは、当社の製品やサービスに関するご意見やご要望を収集するために。</p>
+            <p>アンケート結果は、今後の製品開発やサービス向上に役立てさせていただきます。</p>
+          </div>          
+          <div class="image-container">
+              <img src="https://assets.st-note.com/img/1681220681171-xFNvgUIL9y.jpg?width=2000&height=2000&fit=bounds&format=jpg&quality=85" width="620">
+           </div>
+          <div class="form-container"> 
+          <div class="progress-bar">
+              <div class="progress" :style="{ width: (currentStep - 1)*50 + '%'}"></div>
+            </div>
+            <form @submit.prevent="submitForm">
+              <component :is="currentStep === 1 ? 'page-one' : 'page-two'" @next="nextStep" @prev="prevStep" />
+            </form>
+            </div>
+         <main>
+    </div>
+
+    <script>
+        // 1ページ目のコンポーネント
+        const PageOne = {
+          emits: ['next', 'prev'],
+          template: `
+            <div class="form-group">
+            <div class="question">
+              <label for="companyName">企業名<span class="required">*</span></label>
+              <input type="text" id="companyName" v-model="form.companyName" class="form-control" required placeholder="株式会社プレイド">
+            </div>
+            <div class="question">
+              <label for="fullName">氏名<span class="required">*</span></label>
+              <input type="text" id="fullName" v-model="form.fullName" class="form-control" required placeholder="プレイド太郎">
+            </div>
+            <div class="question">
+              <p>顧客満足度<span class="required">*</span></p>
+              <ul style="display:inline-block;">
+                <li>
+                  <label for="satification">満足</label>
+                  <input type="radio" name="satification" value="満足" v-model="selectSatification" >
+                </li>
+                <li>
+                  <label for="satification">やや満足</label>
+                  <input type="radio" name="satification" value="やや満足" v-model="selectSatification" >
+                </li>
+                <li>
+                  <label for="satification">やや不満</label>
+                  <input type="radio" name="satification" value="やや不満" v-model="selectSatification" >
+                </li>
+                <li>
+                  <label for="satification">不満</label>
+                  <input type="radio" name="satification" value="不満" v-model="selectSatification" >
+                </li>
+              </ul>
+            </div>
+            <div class="question">
+              <label for="comment">ご意見</label>
+              <textarea id="comment" v-model="form.comment" class="form-control" required placeholder="任意回答"></textarea>
+            </div>
+            <div class="question">
+              <p>性別</p>
+              <select name="sex">
+                <option value="male">男性</option>
+                <option value="female">女性</option>
+              </select>
+            </div>
+            <div class="question">
+              <label for="age">年齢</label>
+              <input type="number" id="age" v-model="form.age" class="form-control" required placeholder="半角数字以外で入力できません">
+            </div>
+          </div>
+
+          <button @click.prevent="nextStep" :disabled="!isFormValid" class="btn btn-primary">次へ</button>
+          `,
+          data(){
+            return {
+              form: {
+                companyName: '',
+                fullName: '',
+                comment: '',
+                age: null,
+              },
+              selectSatification: null,
+            };
+          },
+          computed: {
+          isFormValid(){
+              return this.form.companyName.trim() !== '' && this.form.fullName.trim() !== '' && this.selectSatification !== null;
+            }
+          },
+          methods: {
+            nextStep(){
+              this.$emit('next');
+            }
+          }
+        };
+        // 2ページ目のコンポーネント
+        const PageTwo = {
+          emits: ['next', 'prev'],
+          template: `
+          <div class="form-group">
+           <div>
+            <label for="email">Eメール<span class="required">*</span></label>
+            <input type="email" id="email" v-model="form.email" class="form-control" required placeholder="abcde@gkaisya.co.jp">
+           </div>
+           <div>
+            <label for="tel">電話番号<span class="required">*</span></label>
+            <input type="tel" id="tel" v-model="form.tel" class="form-control" required placeholder="-無しで数値のみで入力してください">
+           </div>
+           <div>
+            <label for="birthday">生年月日<span class="required">*</span></label>
+            <input type="date" id="birthday" v-model="form.birthday" class="form-control" required>
+           </div>
+          </div>
+      
+          <button @click.prevent="prevStep" class="btn btn-primary button-spacing">戻る</button>
+      
+          <button type="submit" @click="submitForm" class="btn btn-primary" :disabled="!isDisabled" >
+            <span v-if="!loading">送信</span>
+            <div v-if="loading" class="spinner"></div>
+          </button>
+          `,
+          data(){
+            return {
+              form: {
+                email: '',
+                tel: '',
+                birthday: '',
+              },
+              loading: false
+            }
+          },
+          computed: {
+            isDisabled(){
+              return this.form.email.trim() !== '' && this.form.tel.trim() !== '' && this.form.birthday.trim() !== '' && this.loading == false;
+            }
+          },
+          methods: {
+            prevStep(){
+              this.$emit("prev");
+            },
+            submitForm(){
+              this.loading = true;
+      
+              setTimeout(() => {
+                console.log("フォームが送信されました");
+                this.loading = false;
+                }, 5000);
+              }
+            }
+          };
+      
+        const app = Vue.createApp({
+          data() {
+            return {
+              currentStep: 1,
+              loading: false
+              }
+          },
+          methods: {
+            submitForm() {
+              // ここでフォームのデータを送信するための処理を追加
+            this.loading = true;
+      
+            setTimeout(() => {
+              console.log("フォームが送信されました");
+              this.loading = false;
+              }, 5000);
+            },
+            nextStep() {
+              this.currentStep++;
+            },
+            prevStep(){
+              this.currentStep--;
+            }
+          }
+        });
+        app.component('page-one', PageOne);
+        app.component('page-two', PageTwo);
+        app.mount("#app");
+      </script>
+      
+</body>
+</html>
