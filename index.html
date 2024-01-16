@@ -24,8 +24,8 @@
     body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0px;
-    overflow: hidden;
+    padding: 0;
+    overflow: auto;
     }
 
     main {
@@ -97,41 +97,16 @@
       border-radius: 4px;
       transition: width 0.3s ease-in-out;
     }
-
-    .container {
-      display: flex;
-      align-items: flex-start;
-    }
-
     .form-container {
-    width: 50%;
+    width: 80%;
     padding: 20px;
     background-color: rgb(245, 248, 250);
-    margin: 10px;
+    margin: 0 auto;
     position: relative;
     z-index: 1;
-    min-width: 300px;
-    max-width: 600px;
-    justify-content: center;
+    align-items: center;
 
     }
-
-    .image-container {
-    float: left;
-    width: 100%;
-    max-width: 600px;
-    margin: 10px;
-    position: relative;
-    top: 200px;
-    }
-
-    @media (max-width: 600px){
-      .image-container{
-        display: flex;
-        flex-direction: column;
-      }
-    }
-
     @keyframes spin {
       to {
         transform: rotate(360deg);
@@ -143,13 +118,9 @@
       width: 100%;
       height: 100px;
       background-color: rgb(245, 248, 250);
-      padding: 10px;
       z-index: 2;
-    }
-
-    h1 {
-      margin: 10px;
-      font-family: "Noto Sans JP";
+      overflow: hidden;
+      margin: 0;
     }
 
     nav {
@@ -185,23 +156,35 @@
     .survey-purpose {
       margin: 10px;
       padding: 10px;
-      width: 100%;
-      position: absolute;
+      /* width: 100%; */
+      /* position: absolute; */
       background-color: rgb(245, 248, 250) ;
       z-index: 0;
+      text-align: center;
+      /* margin-bottom: 20px; */
     }
+
+    .header-image {
+      width: 100%;;
+      height: 320px;
+      object-fit: cover;
+      top: 0;
+      margin: 0;
+    }
+
+    .container-fluid {
+      padding-left: 0 ;
+      padding-right: 0;
+      display: flex;
+      flex-direction: column;
+    } 
 
     </style>
 </head>
 <body>
     <div id="app" class="container-fluid">
         <header>
-            <h1>
-              <a href="https://plaid.co.jp/">
-
-                <img src="https://www.scsk.jp/product/common/karte/img/karte_logo.png" width="200">
-              </a>
-            </h1>
+            <img class="header-image" src="https://trailheads.jp/wp-content/uploads/2018/09/plaid_007-2000x1334.jpg" width="100%">
             <nav>
                 <ul>
                   <li><a href="#">資料請求</a></li>
@@ -214,19 +197,16 @@
             <h2>アンケートの目的</h2>
             <p>このアンケートは、当社の製品やサービスに関するご意見やご要望を収集するために。</p>
             <p>アンケート結果は、今後の製品開発やサービス向上に役立てさせていただきます。</p>
-          </div>          
-          <!-- <div class="image-container">
-              <img src="https://assets.st-note.com/img/1681220681171-xFNvgUIL9y.jpg?width=2000&height=2000&fit=bounds&format=jpg&quality=85" width="620">
-           </div> -->
-          <div class="form-container"> 
-          <div class="progress-bar">
+        </div>          
+        <div class="form-container"> 
+            <div class="progress-bar">
               <div class="progress" :style="{ width: (currentStep - 1)*50 + '%'}"></div>
             </div>
             <form @submit.prevent="submitForm">
               <component :is="currentStep === 1 ? 'page-one' : 'page-two'" @next="nextStep" @prev="prevStep" />
             </form>
-            </div>
-         <main>
+        </div>
+        <main>
     </div>
 
     <script>
