@@ -35,6 +35,7 @@
     }
     
     .btn {
+      margin: 10px;
       background-color: rgb(40, 171, 159);
       border-color: rgb(40, 171, 159);
     }
@@ -106,6 +107,7 @@
     z-index: 1;
     align-items: center;
     border-radius: 10px;
+    padding-bottom: 5px;
 
     }
     @keyframes spin {
@@ -151,12 +153,8 @@
     .survey-purpose {
       margin-top: 10px;
       padding-top: 10px;
-      /* width: 100%; */
-      /* position: absolute; */
-      /* background-color: rgb(245, 248, 250) ; */
       z-index: 0;
       text-align: center;
-      /* margin-bottom: 20px; */
     }
 
     .header-image {
@@ -213,18 +211,7 @@
               「*」は回答必須項目です。
             </p>
             <form @submit.prevent="submitForm">
-              <component :is="currentStep === 1 ? 'page-one' : 'page-two'" @next="nextStep" @prev="prevStep" />
-            </form>
-        </div>
-        <main>
-    </div>
-
-    <script>
-        // 1ページ目のコンポーネント
-        const PageOne = {
-          emits: ['next', 'prev'],
-          template: `
-            <div class="form-group">
+            <div class="form-group" v-if="currentStep==1">
             <div class="question">
               <label for="companyName">企業名<span class="required">*</span></label>
               <input type="text" id="companyName" v-model="form.companyName" class="form-control" required placeholder="株式会社プレイド">
@@ -237,30 +224,30 @@
               <p>顧客満足度<span class="required">*</span></p>
               <ul style="display:inline-block;">
                 <li>
-                  <label for="satification">満足</label>
-                  <input type="radio" name="satification" value="満足" v-model="selectSatification" >
+                  <label for="satisfied">満足</label>
+                  <input type="radio" id="satisfied" value="満足" v-model="form.selectSatification" >
                 </li>
                 <li>
-                  <label for="satification">やや満足</label>
-                  <input type="radio" name="satification" value="やや満足" v-model="selectSatification" >
+                  <label for="somewhat_satisfied">やや満足</label>
+                  <input type="radio" id="somewhat_satisfied" value="やや満足" v-model="form.selectSatification" >
                 </li>
                 <li>
-                  <label for="satification">やや不満</label>
-                  <input type="radio" name="satification" value="やや不満" v-model="selectSatification" >
+                  <label for="somewhat_dissatisfied">やや不満</label>
+                  <input type="radio" id="somewhat_dissatisfied" value="やや不満" v-model="form.selectSatification" >
                 </li>
                 <li>
-                  <label for="satification">不満</label>
-                  <input type="radio" name="satification" value="不満" v-model="selectSatification" >
+                  <label for="dissatisfied">不満</label>
+                  <input type="radio" id="dissatisfied" value="不満" v-model="form.selectSatification" >
                 </li>
               </ul>
             </div>
-            <div class="question">
+           <div class="question">
               <label for="comment">ご意見</label>
               <textarea id="comment" v-model="form.comment" class="form-control" required placeholder="任意回答"></textarea>
             </div>
             <div class="question">
-              <p>性別</p>
-              <select name="sex">
+              <label for="sex">性別</label>
+              <select id="sex" v-model="form.sex">
                 <option value="male">男性</option>
                 <option value="female">女性</option>
               </select>
@@ -269,100 +256,107 @@
               <label for="age">年齢</label>
               <input type="number" id="age" v-model="form.age" class="form-control" required placeholder="半角数字以外で入力できません">
             </div>
-          </div>
 
           <button @click.prevent="nextStep" :disabled="!isFormValid" class="btn btn-primary">次へ</button>
-          `,
-          data(){
+          </div>
+
+          <div class="form-group" v-if="currentStep==2">
+            <div>
+             <label for="email">Eメール<span class="required">*</span></label>
+             <input type="email" id="email" v-model="form.email" class="form-control" required placeholder="abcde@gkaisya.co.jp">
+            </div>
+            <div>
+             <label for="tel">電話番号<span class="required">*</span></label>
+             <input type="tel" id="tel" v-model="form.tel" class="form-control" required placeholder="-無しで数値のみで入力してください">
+            </div>
+            <div>
+             <label for="birthday">生年月日<span class="required">*</span></label>
+             <input type="date" id="birthday" v-model="form.birthday" class="form-control" required>
+            </div>
+            <button @click.prevent="prevStep" class="btn btn-primary button-spacing">戻る</button>
+
+            <button @click.prevent="nextStep" class="btn btn-primary" :disabled="!isDisabled" >次へ</button>
+           </div>
+
+           <div class="form-group" v-if="currentStep==3">
+            <h2 v-if="!submitSuccess" style="text-align: center;">入力内容を確認してください</h2>
+            <h2 v-if="submitSuccess" style="text-align: center; color: limegreen;">送信完了しました。ホームへお戻りください</h2>
+            <div class="question">
+              <label for="companyName">企業名<span class="required">*</span></label>
+              <p>{{ form.companyName }}</p>
+            </div>
+            <div class="question">
+              <label for="fullName">氏名<span class="required"></span></label>
+              <p>{{ form.fullName }}</p>
+            </div> 
+            <div class="question">
+              <label for="selectSatification">顧客満足度<span class="required">*</span></label>
+              <p>{{ form.selectSatification }}</p>
+            </div>
+            <div class="question">
+              <label for="comment">ご意見</label>
+              <p>{{ form.comment }}</p>
+            </div>
+            <div class="question">
+              <label for="sex">性別</label>
+              <p>{{ form.sex }}</p>
+            </div>
+            <div class="question">
+              <label for="age">年齢</label>
+              <p>{{ form.age }}</p>
+            </div>
+            <div class="question">
+              <label for="email">Eメール<span class="required">*</span></label>
+              <p>{{ form.email }}</p>
+            </div>
+            <div class="question">
+              <label for="tel">電話番号<span class="required">*</span></label>
+              <p>{{ form.tel }}</p>
+            </div>
+            <div class="question">
+              <label for="birthday">生年月日<span class="required">*</span></label>
+              <p>{{ form.birthday }}</p>
+            </div>
+
+              <button @click.prevent="prevStep" class="btn btn-primary button-spacing" :disabled="submitSuccess">戻る</button>
+
+            <button type="submit" class="btn btn-primary" :disabled="submitSuccess">
+                <span v-if="!loading">送信</span>
+                <div v-if="loading" class="spinner"></div>
+            </button>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <script>      
+        const app = Vue.createApp({
+          data() {
             return {
               form: {
                 companyName: '',
                 fullName: '',
                 comment: '',
                 age: null,
-              },
-              selectSatification: null,
-            };
-          },
-          computed: {
-          isFormValid(){
-              return this.form.companyName.trim() !== '' && this.form.fullName.trim() !== '' && this.selectSatification !== null;
-            }
-          },
-          methods: {
-            nextStep(){
-              this.$emit('next');
-            }
-          }
-        };
-        // 2ページ目のコンポーネント
-        const PageTwo = {
-          emits: ['next', 'prev'],
-          template: `
-          <div class="form-group">
-           <div>
-            <label for="email">Eメール<span class="required">*</span></label>
-            <input type="email" id="email" v-model="form.email" class="form-control" required placeholder="abcde@gkaisya.co.jp">
-           </div>
-           <div>
-            <label for="tel">電話番号<span class="required">*</span></label>
-            <input type="tel" id="tel" v-model="form.tel" class="form-control" required placeholder="-無しで数値のみで入力してください">
-           </div>
-           <div>
-            <label for="birthday">生年月日<span class="required">*</span></label>
-            <input type="date" id="birthday" v-model="form.birthday" class="form-control" required>
-           </div>
-          </div>
-      
-          <button @click.prevent="prevStep" class="btn btn-primary button-spacing">戻る</button>
-      
-          <button type="submit" @click="submitForm" class="btn btn-primary" :disabled="!isDisabled" >
-            <span v-if="!loading">送信</span>
-            <div v-if="loading" class="spinner"></div>
-          </button>
-
-          <p v-if="submitSuccess" style="color: green; padding-top: 15px">○送信が完了しました</p>
-          `,
-          data(){
-            return {
-              form: {
                 email: '',
                 tel: '',
                 birthday: '',
+                selectSatification: '',
+                sex: ''
               },
-              loading: false,
-              submitSuccess: false
-            }
-          },
-          computed: {
-            isDisabled(){
-              return this.form.email.trim() !== '' && this.form.tel.trim() !== '' && this.form.birthday.trim() !== '' && this.loading == false;
-            }
-          },
-          methods: {
-            prevStep(){
-              this.$emit("prev");
-            },
-            submitForm(){
-              this.loading = true;
-      
-              setTimeout(() => {
-                console.log("フォームが送信されました");
-                this.loading = false;
-                this.submitSuccess = true;
-                this.currentStep = 3;
-                }, 5000);
-              }
-            }
-          };
-      
-        const app = Vue.createApp({
-          data() {
-            return {
               currentStep: 1,
               loading: false,
               submitSuccess: false
               }
+          },
+          computed: {
+            isFormValid() {
+              return this.form.companyName.trim() !== '' && this.form.fullName.trim() !== '' && this.form.selectSatification.trim() !== '';
+            },
+            isDisabled(){
+              return this.form.email.trim() !== '' && this.form.tel.trim() !== '' && this.form.birthday.trim() !== '' && this.loading == false;
+            }
           },
           methods: {
             submitForm() {
@@ -370,10 +364,9 @@
             this.loading = true;
       
             setTimeout(() => {
-              console.log("フォームが送信されました");
+              console.log("フォーム内容",this.form);
               this.loading = false;
               this.submitSuccess = true;
-              this.currentStep = 3;
               }, 5000);
             },
             nextStep() {
@@ -384,8 +377,6 @@
             }
           }
         });
-        app.component('page-one', PageOne);
-        app.component('page-two', PageTwo);
         app.mount("#app");
       </script>
       
